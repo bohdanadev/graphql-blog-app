@@ -1,70 +1,123 @@
-# Getting Started with Create React App
+# Graphql-Blog-App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Graphql-Blog-App is a small full-stack blog application built using Node.js, GraphQL, Apollo Server, PostgreSQL, Prisma, React, Apollo Client, and React-Bootstrap.
 
-## Available Scripts
+## Project Structure
 
-In the project directory, you can run:
+- **Server**: Developed using Node.js, GraphQL, Apollo Server, PostgreSQL, and Prisma.
+- **Client**: Developed using React, Apollo Client, and React-Bootstrap.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- User signup and signin
+- User profile view
+- Create, read, update, and delete posts
+- Query and mutate data through GraphQL API
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+- Node.js
+- Docker
+- PostgreSQL
+- Prisma
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### 1. Clone the Repository
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```sh
+git clone https://github.com/bohdanadev/graphql-blog-app.git
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+cd graphql-blog-app
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Install dependencies
 
-### `npm run eject`
+In both the **server** and the **client** directories, install dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm install
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Setup Environment Variables
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Create `.env` files in both the **server** and **client** directories
 
-## Learn More
+```
+server (.env)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+DATABASE_URL=postgresql://yourusername:yourpassword@127.0.0.1:5432/yourdatabase?schema=public
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+client (.env)
 
-### Code Splitting
+REACT_APP_API_URL=http://localhost:4000/graphql
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 4. Setup keys
 
-### Analyzing the Bundle Size
+Create `keys.ts` file in the **server/src** directory
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```keys.ts
+export const JSON_SIGNATURE = 'yourjwtsecret';
+export const SALT = 10;
 
-### Making a Progressive Web App
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 5. Setup the Database
 
-### Advanced Configuration
+Navigate to the **server** directory and start the database using Docker Compose.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+cd server
+docker-compose up -d
+```
 
-### Deployment
+### 6. Initialize the Database
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+To initialize the database with Prisma, run:
 
-### `npm run build` fails to minify
+```bash
+npx prisma db push
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+You can also start Prisma Studio to interact with your database:
+
+```bash
+npx prisma studio
+```
+
+### 7. Start the Server
+
+```bash
+npm run start
+```
+
+The server will be running at http://localhost:4000.
+
+### 8. Start the Client
+
+In the **client** directory, start the React app:
+
+```bash
+cd client
+npm start
+```
+
+The client will be running at http://localhost:3000.
+
+## Usage
+
+You can test queries and mutations using the client:
+
+### API Endpoints
+
+http://localhost:3000/signup
+
+http://localhost:3000/signin
+
+http://localhost:3000/profile/:id
+
+http://localhost:3000/posts (default)
