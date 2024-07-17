@@ -25,7 +25,7 @@ Graphql-Blog-App is a small full-stack blog application built using Node.js, Gra
 
 ### 1. Clone the Repository
 
-```sh
+```bash
 git clone https://github.com/bohdanadev/graphql-blog-app.git
 
 cd graphql-blog-app
@@ -42,19 +42,7 @@ npm install
 
 ### 3. Setup Environment Variables
 
-Create `.env` files in both the **server** and **client** directories
-
-```
-server (.env)
-
-DATABASE_URL=postgresql://yourusername:yourpassword@127.0.0.1:5432/yourdatabase?schema=public
-```
-
-```
-client (.env)
-
-REACT_APP_API_URL=http://localhost:4000/graphql
-```
+Create `.env` files in both the **server** and **client** directories and provide the application's necessary variables using `.env.example` files
 
 ### 4. Setup keys
 
