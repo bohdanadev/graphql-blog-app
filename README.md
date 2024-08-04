@@ -36,7 +36,7 @@ cd graphql-blog-app
 In both the **server** and the **client** directories, install dependencies
 
 ```bash
-npm install
+npm ci
 
 ```
 
@@ -44,17 +44,7 @@ npm install
 
 Create `.env` files in both the **server** and **client** directories and provide the application's necessary variables using `.env.example` files
 
-### 4. Setup keys
-
-Create `keys.ts` file in the **server/src** directory
-
-```keys.ts
-export const JSON_SIGNATURE = 'yourjwtsecret';
-export const SALT = 10;
-
-```
-
-### 5. Setup the Database
+### 4. Setup the Database
 
 Navigate to the **server** directory and start the database using Docker Compose.
 
@@ -63,7 +53,7 @@ cd server
 docker-compose up -d
 ```
 
-### 6. Initialize the Database
+### 5. Initialize the Database
 
 To initialize the database with Prisma, run:
 
@@ -77,7 +67,7 @@ You can also start Prisma Studio to interact with your database:
 npx prisma studio
 ```
 
-### 7. Start the Server
+### 6. Start the Server
 
 ```bash
 npm run start
@@ -85,7 +75,7 @@ npm run start
 
 The server will be running at http://localhost:4000.
 
-### 8. Start the Client
+### 7. Start the Client
 
 In the **client** directory, start the React app:
 
