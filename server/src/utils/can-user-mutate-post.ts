@@ -1,4 +1,6 @@
+import { StatusCodes } from 'http-status-codes';
 import { Context } from '..';
+import { ApiError } from '../errors/api-error';
 
 interface CanUserMutatePostParams {
     userId: number;
@@ -10,7 +12,7 @@ export const canUserMutatePost = async ({
     userId,
     postId,
     prisma,
-}: CanUserMutatePostParams) => {
+}: CanUserMutatePostParams): Promise<boolean> => {
     const user = await prisma.user.findUnique({
         where: {
             id: userId,
@@ -18,14 +20,7 @@ export const canUserMutatePost = async ({
     });
 
     if (!user) {
-        return {
-            userErrors: [
-                {
-                    message: 'User not found',
-                },
-            ],
-            post: null,
-        };
+        throw new ApiError('User not found', StatusCodes.NOT_FOUND);
     }
 
     const post = await prisma.post.findUnique({
@@ -35,13 +30,7 @@ export const canUserMutatePost = async ({
     });
 
     if (post?.authorId !== user.id) {
-        return {
-            userErrors: [
-                {
-                    message: 'Post not owned by user',
-                },
-            ],
-            post: null,
-        };
+        throw new ApiError('Post is not owned by user', StatusCodes.FORBIDDEN);
     }
+    return true;
 };

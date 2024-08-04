@@ -2,10 +2,12 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import JWT from 'jsonwebtoken';
 import { configs } from '../../configs/config';
-import { Context } from '../../index';
 import { SigninArgs } from './interfaces/signin.interface';
 import { SignupArgs } from './interfaces/signup.interface';
 import { UserPayload } from './interfaces/user-payload.interface';
+import { Context } from '../..';
+import { ApiError } from '../../errors/api-error';
+import { StatusCodes } from 'http-status-codes';
 
 export const authResolvers = {
     Mutation: {
@@ -19,14 +21,7 @@ export const authResolvers = {
             const isEmail = validator.isEmail(email);
 
             if (!isEmail) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Invalid email',
-                        },
-                    ],
-                    token: null,
-                };
+                throw new ApiError('Invalid email', StatusCodes.BAD_REQUEST);
             }
 
             const isValidPassword = validator.isLength(password, {
@@ -34,25 +29,14 @@ export const authResolvers = {
             });
 
             if (!isValidPassword) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Invalid password',
-                        },
-                    ],
-                    token: null,
-                };
+                throw new ApiError('Invalid password', StatusCodes.BAD_REQUEST);
             }
 
             if (!name || !bio) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Invalid name or bio',
-                        },
-                    ],
-                    token: null,
-                };
+                throw new ApiError(
+                    'Invalid name or bio',
+                    StatusCodes.BAD_REQUEST,
+                );
             }
 
             const hashedPassword = await bcrypt.hash(password, configs.SALT);
@@ -73,7 +57,6 @@ export const authResolvers = {
             });
 
             return {
-                userErrors: [],
                 token: JWT.sign(
                     {
                         userId: user.id,
@@ -99,23 +82,22 @@ export const authResolvers = {
             });
 
             if (!user) {
-                return {
-                    userErrors: [{ message: 'Invalid credentials' }],
-                    token: null,
-                };
+                throw new ApiError(
+                    'Invalid credentials',
+                    StatusCodes.NOT_FOUND,
+                );
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (!isMatch) {
-                return {
-                    userErrors: [{ message: 'Invalid credentials' }],
-                    token: null,
-                };
+                throw new ApiError(
+                    'Invalid credentials',
+                    StatusCodes.BAD_REQUEST,
+                );
             }
 
             return {
-                userErrors: [],
                 token: JWT.sign({ userId: user.id }, configs.JSON_SIGNATURE, {
                     expiresIn: 3600000,
                 }),

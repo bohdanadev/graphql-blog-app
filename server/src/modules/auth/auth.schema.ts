@@ -2,7 +2,6 @@ import { gql } from 'apollo-server';
 
 export const authSchema = gql`
     type AuthPayload {
-        userErrors: [UserError!]!
         token: String
     }
 
@@ -18,9 +17,5 @@ export const authSchema = gql`
     input CredentialsInput {
         email: String!
         password: String!
-    }
-
-    type UserError {
-        message: String!
     }
 `;

@@ -1,4 +1,6 @@
+import { StatusCodes } from 'http-status-codes';
 import { Context } from '../..';
+import { ApiError } from '../../errors/api-error';
 import { userLoader } from '../../loaders/user-loader';
 import { canUserMutatePost } from '../../utils/can-user-mutate-post';
 import { PostArgs } from './interfaces/post-args.interface';
@@ -27,31 +29,21 @@ export const postResolvers = {
             { prisma, userInfo }: Context,
         ): Promise<PostPayloadType> => {
             if (!userInfo) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Forbidden access (unauthenticated)',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Forbidden access (unauthenticated)',
+                    StatusCodes.FORBIDDEN,
+                );
             }
 
             const { title, content } = post;
             if (!title || !content) {
-                return {
-                    userErrors: [
-                        {
-                            message:
-                                'You must provide title and content to create a post',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'You must provide title and content to create a post',
+                    StatusCodes.BAD_REQUEST,
+                );
             }
 
             return {
-                userErrors: [],
                 post: prisma.post.create({
                     data: {
                         title,
@@ -67,36 +59,29 @@ export const postResolvers = {
             { prisma, userInfo }: Context,
         ): Promise<PostPayloadType> => {
             if (!userInfo) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Forbidden access (unauthenticated)',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Forbidden access (unauthenticated)',
+                    StatusCodes.FORBIDDEN,
+                );
             }
 
-            const error = await canUserMutatePost({
+            const isAllowed = await canUserMutatePost({
                 userId: userInfo.userId,
                 postId: Number(postId),
                 prisma,
             });
 
-            if (error) return error;
+            if (!isAllowed) {
+                throw new ApiError('Forbidden access', StatusCodes.FORBIDDEN);
+            }
 
             const { title, content } = post;
 
             if (!title && !content) {
-                return {
-                    userErrors: [
-                        {
-                            message:
-                                'Need to have at least on e field to update',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Need to have at least one field to update',
+                    StatusCodes.BAD_REQUEST,
+                );
             }
 
             const existingPost = await prisma.post.findUnique({
@@ -106,14 +91,10 @@ export const postResolvers = {
             });
 
             if (!existingPost) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Post does not exist',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Post does not exist',
+                    StatusCodes.NOT_FOUND,
+                );
             }
 
             const payloadToUpdate = {
@@ -125,7 +106,6 @@ export const postResolvers = {
             if (!content) delete payloadToUpdate.content;
 
             return {
-                userErrors: [],
                 post: prisma.post.update({
                     data: {
                         ...payloadToUpdate,
@@ -142,23 +122,21 @@ export const postResolvers = {
             { prisma, userInfo }: Context,
         ): Promise<PostPayloadType> => {
             if (!userInfo) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Forbidden access (unauthenticated)',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Forbidden access (unauthenticated)',
+                    StatusCodes.FORBIDDEN,
+                );
             }
 
-            const error = await canUserMutatePost({
+            const isAllowed = await canUserMutatePost({
                 userId: userInfo.userId,
                 postId: Number(postId),
                 prisma,
             });
 
-            if (error) return error;
+            if (!isAllowed) {
+                throw new ApiError('Forbidden access', StatusCodes.FORBIDDEN);
+            }
 
             const post = await prisma.post.findUnique({
                 where: {
@@ -167,14 +145,10 @@ export const postResolvers = {
             });
 
             if (!post) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Post does not exist',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Post does not exist',
+                    StatusCodes.NOT_FOUND,
+                );
             }
 
             await prisma.post.delete({
@@ -184,7 +158,6 @@ export const postResolvers = {
             });
 
             return {
-                userErrors: [],
                 post,
             };
         },
@@ -194,26 +167,23 @@ export const postResolvers = {
             { prisma, userInfo }: Context,
         ): Promise<PostPayloadType> => {
             if (!userInfo) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Forbidden access (unauthenticated)',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Forbidden access (unauthenticated)',
+                    StatusCodes.FORBIDDEN,
+                );
             }
 
-            const error = await canUserMutatePost({
+            const isAllowed = await canUserMutatePost({
                 userId: userInfo.userId,
                 postId: Number(postId),
                 prisma,
             });
 
-            if (error) return error;
+            if (!isAllowed) {
+                throw new ApiError('Forbidden access', StatusCodes.FORBIDDEN);
+            }
 
             return {
-                userErrors: [],
                 post: prisma.post.update({
                     where: {
                         id: Number(postId),
@@ -230,26 +200,23 @@ export const postResolvers = {
             { prisma, userInfo }: Context,
         ): Promise<PostPayloadType> => {
             if (!userInfo) {
-                return {
-                    userErrors: [
-                        {
-                            message: 'Forbidden access (unauthenticated)',
-                        },
-                    ],
-                    post: null,
-                };
+                throw new ApiError(
+                    'Forbidden access (unauthenticated)',
+                    StatusCodes.FORBIDDEN,
+                );
             }
 
-            const error = await canUserMutatePost({
+            const isAllowed = await canUserMutatePost({
                 userId: userInfo.userId,
                 postId: Number(postId),
                 prisma,
             });
 
-            if (error) return error;
+            if (!isAllowed) {
+                throw new ApiError('Forbidden access', StatusCodes.FORBIDDEN);
+            }
 
             return {
-                userErrors: [],
                 post: prisma.post.update({
                     where: {
                         id: Number(postId),

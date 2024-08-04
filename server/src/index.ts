@@ -51,6 +51,14 @@ const server = new ApolloServer({
             userInfo,
         };
     },
+    formatError: (err) => {
+        return {
+            message: err.message,
+            code: err.extensions.code,
+            name: err.name,
+            path: err.path,
+        };
+    },
 });
 server.listen().then(({ url }) => {
     console.log(`Server ready on ${url}`);

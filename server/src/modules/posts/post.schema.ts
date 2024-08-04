@@ -22,12 +22,7 @@ export const postSchema = gql`
         postUnpublish(postId: ID!): PostPayload!
     }
 
-    type UserError {
-        message: String!
-    }
-
     type PostPayload {
-        userErrors: [UserError!]!
         post: Post
     }
 
